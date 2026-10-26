@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recurring Transactions | Expense Tracker</title>
+  <meta name="description" content="Manage recurring salary, rent, bills, and subscriptions with automated due processing.">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💳</text></svg>">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">
+            <i data-lucide="wallet"></i>
+          </div>
+          <span>FinTrack Pro</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Main Menu</span>
+        <a href="index.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="transactions.html" class="nav-item">
+          <i data-lucide="arrow-left-right"></i>
+          <span>Transactions</span>
+        </a>
+        <a href="budgets.html" class="nav-item">
+          <i data-lucide="pie-chart"></i>
+          <span>Budgets</span>
+        </a>
+        <a href="categories.html" class="nav-item">
+          <i data-lucide="tags"></i>
+          <span>Categories</span>
+        </a>
+        <a href="reports.html" class="nav-item">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Reports & Analytics</span>
+        </a>
+        <a href="recurring.html" class="nav-item active">
+          <i data-lucide="refresh-cw"></i>
+          <span>Recurring</span>
+        </a>
+
+        <span class="nav-section-title" style="margin-top: 1rem;">System & Auth</span>
+        <a href="settings.html" class="nav-item">
+          <i data-lucide="settings"></i>
+          <span>Settings</span>
+        </a>
+        <a href="login.html" class="nav-item">
+          <i data-lucide="log-in"></i>
+          <span>Demo Login</span>
+        </a>
+        <a href="register.html" class="nav-item">
+          <i data-lucide="user-plus"></i>
+          <span>Demo Register</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-widget">
+          <div class="user-avatar">AP</div>
+          <div class="user-info">
+            <div class="user-name">Aarav Patel</div>
+            <div class="user-role">Student Account</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" id="menu-toggle-btn" aria-label="Toggle navigation">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="page-title-box">
+            <h1>Recurring Transactions</h1>
+            <p>Schedule repeatable payments and incomes with duplicate protection.</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn-icon-only" id="theme-toggle-btn" title="Toggle Theme">
+            <i data-lucide="moon"></i>
+          </button>
+          <button class="btn btn-primary" id="btn-open-recurring-modal">
+            <i data-lucide="plus"></i>
+            <span>Add Recurring Rule</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- Scheduled Info Banner -->
+        <div class="card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(124, 58, 237, 0.06)); border-color: rgba(79, 70, 229, 0.2);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: flex-start; gap: 0.85rem; max-width: 720px;">
+              <div style="width: 38px; height: 38px; border-radius: var(--radius-md); background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
+              </div>
+              <div>
+                <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-main);">Prototype Execution Engine</h3>
+                <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+                  In this frontend prototype, click <strong>"Generate Due Transactions"</strong> to evaluate all rules. Once connected to Spring Boot, this task will be automated using a background <code>@Scheduled</code> cron job.
+                </p>
+              </div>
+            </div>
+
+            <button class="btn btn-success" id="btn-generate-due" style="box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+              <i data-lucide="play-circle"></i>
+              <span>Generate Due Transactions</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Rules Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;" id="recurring-rules-container">
+          <!-- Populated by recurring.js -->
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Add / Edit Recurring Rule Modal -->
+  <div class="modal-overlay" id="recurring-modal" role="dialog" aria-modal="true" aria-labelledby="rec-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="rec-modal-title">Create Recurring Rule</h3>
+        <button class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="recurring-form" novalidate>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Transaction Type <span class="required">*</span></label>
+            <div style="display: flex; gap: 1rem;">
+              <label style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.65rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="radio" name="rec-type" value="expense" checked>
+                <span style="font-weight: 600; color: var(--danger);">Expense</span>
+              </label>
+              <label style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.65rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer;">
+                <input type="radio" name="rec-type" value="income">
+                <span style="font-weight: 600; color: var(--success);">Income</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rec-modal-amount" class="form-label">Amount (₹) <span class="required">*</span></label>
+              <input type="number" step="any" min="0.01" class="form-control" id="rec-modal-amount" placeholder="e.g. 15000" required>
+            </div>
+
+            <div class="form-group">
+              <label for="rec-modal-frequency" class="form-label">Frequency <span class="required">*</span></label>
+              <select class="form-control" id="rec-modal-frequency" required>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly" selected>Monthly</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="rec-modal-category" class="form-label">Category <span class="required">*</span></label>
+            <select class="form-control" id="rec-modal-category" required></select>
+          </div>
+
+          <div class="form-group">
+            <label for="rec-modal-description" class="form-label">Description <span class="required">*</span></label>
+            <input type="text" class="form-control" id="rec-modal-description" placeholder="e.g. Apartment Rent or Monthly Salary" required maxlength="120">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="rec-modal-start-date" class="form-label">Start Date <span class="required">*</span></label>
+              <input type="date" class="form-control" id="rec-modal-start-date" required>
+            </div>
+
+            <div class="form-group">
+              <label for="rec-modal-next-due" class="form-label">Next Due Date <span class="required">*</span></label>
+              <input type="date" class="form-control" id="rec-modal-next-due" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Rule</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/recurring.js"></script>
+</body>
+</html>

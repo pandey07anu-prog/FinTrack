@@ -1,0 +1,13 @@
+# Environment credentials
+.env
+server/.env
+*.env
+
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Logs & OS files
+npm-debug.log*
+.DS_Store
+Thumbs.db

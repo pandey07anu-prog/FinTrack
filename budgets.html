@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Budgets | Expense Tracker & Personal Finance Manager</title>
+  <meta name="description" content="Set and monitor monthly category budgets with spending alerts and warning thresholds.">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💳</text></svg>">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">
+            <i data-lucide="wallet"></i>
+          </div>
+          <span>FinTrack Pro</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Main Menu</span>
+        <a href="index.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="transactions.html" class="nav-item">
+          <i data-lucide="arrow-left-right"></i>
+          <span>Transactions</span>
+        </a>
+        <a href="budgets.html" class="nav-item active">
+          <i data-lucide="pie-chart"></i>
+          <span>Budgets</span>
+        </a>
+        <a href="categories.html" class="nav-item">
+          <i data-lucide="tags"></i>
+          <span>Categories</span>
+        </a>
+        <a href="reports.html" class="nav-item">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Reports & Analytics</span>
+        </a>
+        <a href="recurring.html" class="nav-item">
+          <i data-lucide="refresh-cw"></i>
+          <span>Recurring</span>
+        </a>
+
+        <span class="nav-section-title" style="margin-top: 1rem;">System & Auth</span>
+        <a href="settings.html" class="nav-item">
+          <i data-lucide="settings"></i>
+          <span>Settings</span>
+        </a>
+        <a href="login.html" class="nav-item">
+          <i data-lucide="log-in"></i>
+          <span>Demo Login</span>
+        </a>
+        <a href="register.html" class="nav-item">
+          <i data-lucide="user-plus"></i>
+          <span>Demo Register</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-widget">
+          <div class="user-avatar">AP</div>
+          <div class="user-info">
+            <div class="user-name">Aarav Patel</div>
+            <div class="user-role">Student Account</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      <!-- Topbar Header -->
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" id="menu-toggle-btn" aria-label="Toggle navigation">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="page-title-box">
+            <h1>Monthly Budgets</h1>
+            <p>Control expenses with category-specific limits and real-time warnings.</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn-icon-only" id="theme-toggle-btn" title="Toggle Theme">
+            <i data-lucide="moon"></i>
+          </button>
+          <button class="btn btn-primary" id="btn-open-budget-modal">
+            <i data-lucide="plus"></i>
+            <span>Set New Budget</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Page Content -->
+      <div class="page-content">
+
+        <!-- Filter Bar -->
+        <div class="dashboard-filter-bar">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">Budget Performance</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Warnings trigger automatically when spending reaches 80% or exceeds 100%.</p>
+          </div>
+
+          <div class="date-selector-group">
+            <i data-lucide="calendar" style="width: 18px; height: 18px; color: var(--text-muted);"></i>
+            <select id="budget-month-select" aria-label="Select Budget Month"></select>
+            <select id="budget-year-select" aria-label="Select Budget Year"></select>
+          </div>
+        </div>
+
+        <!-- Budget Summary Overview Cards -->
+        <div class="metrics-grid" style="margin-bottom: 2rem;">
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Total Budgeted</span>
+              <div class="metric-icon-wrap" style="background-color: var(--primary-light); color: var(--primary);">
+                <i data-lucide="layers"></i>
+              </div>
+            </div>
+            <div class="metric-value" id="stat-total-budgeted">₹0</div>
+            <div class="metric-footer"><span>Sum of category limits</span></div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Actual Spent</span>
+              <div class="metric-icon-wrap" style="background-color: var(--danger-light); color: var(--danger);">
+                <i data-lucide="trending-down"></i>
+              </div>
+            </div>
+            <div class="metric-value amount-expense" id="stat-budget-spent">₹0</div>
+            <div class="metric-footer"><span>Across budgeted categories</span></div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Safe Remaining</span>
+              <div class="metric-icon-wrap" style="background-color: var(--success-light); color: var(--success);">
+                <i data-lucide="shield-check"></i>
+              </div>
+            </div>
+            <div class="metric-value amount-income" id="stat-budget-remaining">₹0</div>
+            <div class="metric-footer"><span>Remaining safe allowance</span></div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-header">
+              <span class="metric-title">Warning Alerts</span>
+              <div class="metric-icon-wrap" style="background-color: var(--warning-light); color: var(--warning);">
+                <i data-lucide="bell"></i>
+              </div>
+            </div>
+            <div class="metric-value" id="stat-budget-alerts" style="font-size: 1.15rem; margin-top: 0.5rem;">0 alerts</div>
+            <div class="metric-footer"><span>Status across categories</span></div>
+          </div>
+        </div>
+
+        <!-- Budget Cards Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;" id="budgets-grid-container">
+          <!-- Populated dynamically by budgets.js -->
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Add / Edit Budget Modal Dialog -->
+  <div class="modal-overlay" id="budget-modal" role="dialog" aria-modal="true" aria-labelledby="budget-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="budget-modal-title">Set Category Budget</h3>
+        <button class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="budget-form" novalidate>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="budget-modal-category" class="form-label">Category <span class="required">*</span></label>
+            <select class="form-control" id="budget-modal-category" required></select>
+            <div class="form-hint">Only expense categories can have budget limits.</div>
+          </div>
+
+          <div class="form-group">
+            <label for="budget-modal-limit" class="form-label">Monthly Spending Limit (₹) <span class="required">*</span></label>
+            <input type="number" step="any" min="1" class="form-control" id="budget-modal-limit" placeholder="e.g. 8000" required>
+            <div class="form-hint">You will be warned if actual expenses hit 80% or exceed 100%.</div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Budget</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/budgets.js"></script>
+</body>
+</html>

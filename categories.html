@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories | Expense Tracker & Personal Finance Manager</title>
+  <meta name="description" content="Manage transaction categories for income and expenses.">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💳</text></svg>">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">
+            <i data-lucide="wallet"></i>
+          </div>
+          <span>FinTrack Pro</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-section-title">Main Menu</span>
+        <a href="index.html" class="nav-item">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="transactions.html" class="nav-item">
+          <i data-lucide="arrow-left-right"></i>
+          <span>Transactions</span>
+        </a>
+        <a href="budgets.html" class="nav-item">
+          <i data-lucide="pie-chart"></i>
+          <span>Budgets</span>
+        </a>
+        <a href="categories.html" class="nav-item active">
+          <i data-lucide="tags"></i>
+          <span>Categories</span>
+        </a>
+        <a href="reports.html" class="nav-item">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Reports & Analytics</span>
+        </a>
+        <a href="recurring.html" class="nav-item">
+          <i data-lucide="refresh-cw"></i>
+          <span>Recurring</span>
+        </a>
+
+        <span class="nav-section-title" style="margin-top: 1rem;">System & Auth</span>
+        <a href="settings.html" class="nav-item">
+          <i data-lucide="settings"></i>
+          <span>Settings</span>
+        </a>
+        <a href="login.html" class="nav-item">
+          <i data-lucide="log-in"></i>
+          <span>Demo Login</span>
+        </a>
+        <a href="register.html" class="nav-item">
+          <i data-lucide="user-plus"></i>
+          <span>Demo Register</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-widget">
+          <div class="user-avatar">AP</div>
+          <div class="user-info">
+            <div class="user-name">Aarav Patel</div>
+            <div class="user-role">Student Account</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="app-main">
+      <header class="app-topbar">
+        <div class="topbar-left">
+          <button class="menu-toggle-btn" id="menu-toggle-btn" aria-label="Toggle navigation">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="page-title-box">
+            <h1>Transaction Categories</h1>
+            <p>Organize spending and income sources with customizable categories.</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn-icon-only" id="theme-toggle-btn" title="Toggle Theme">
+            <i data-lucide="moon"></i>
+          </button>
+          <button class="btn btn-primary" id="btn-open-cat-modal">
+            <i data-lucide="plus"></i>
+            <span>Add Category</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="page-content">
+
+        <!-- Filter Controls -->
+        <div class="dashboard-filter-bar">
+          <div>
+            <h2 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main);">Available Categories</h2>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">Standard and custom categories available for transactions and budgeting.</p>
+          </div>
+
+          <div style="display: flex; background: var(--bg-surface-alt); padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <button class="btn btn-sm cat-type-filter active" data-type="ALL" style="padding: 0.35rem 0.85rem;">All</button>
+            <button class="btn btn-sm cat-type-filter" data-type="expense" style="padding: 0.35rem 0.85rem;">Expenses</button>
+            <button class="btn btn-sm cat-type-filter" data-type="income" style="padding: 0.35rem 0.85rem;">Income</button>
+          </div>
+        </div>
+
+        <!-- Categories Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;" id="categories-grid">
+          <!-- Populated by categories.js -->
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Category Modal -->
+  <div class="modal-overlay" id="category-modal" role="dialog" aria-modal="true" aria-labelledby="cat-modal-title">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="cat-modal-title">Create New Category</h3>
+        <button class="modal-close-btn" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="category-form" novalidate>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="cat-modal-name" class="form-label">Category Name <span class="required">*</span></label>
+            <input type="text" class="form-control" id="cat-modal-name" placeholder="e.g. Subscriptions or Gym" required maxlength="30">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="cat-modal-type" class="form-label">Type <span class="required">*</span></label>
+              <select class="form-control" id="cat-modal-type" required>
+                <option value="expense">Expense</option>
+                <option value="income">Income</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="cat-modal-color" class="form-label">Badge Color</label>
+              <input type="color" class="form-control" id="cat-modal-color" value="#6366F1" style="height: 42px; padding: 2px;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="cat-modal-icon" class="form-label">Icon</label>
+            <select class="form-control" id="cat-modal-icon">
+              <option value="tag">Tag</option>
+              <option value="coffee">Coffee</option>
+              <option value="smartphone">Smartphone</option>
+              <option value="gift">Gift</option>
+              <option value="book">Book</option>
+              <option value="dumbbell">Fitness / Gym</option>
+              <option value="plane">Travel</option>
+              <option value="briefcase">Business</option>
+              <option value="award">Awards</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-modal-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Shared Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/categories.js"></script>
+</body>
+</html>
