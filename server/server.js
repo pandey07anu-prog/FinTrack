@@ -55,19 +55,22 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
+  const mongoose = require('mongoose');
   const { getDBStatus } = require('./db');
-  const dbInfo = typeof getDBStatus === 'function' ? getDBStatus() : { isConnected: false };
+  const dbInfo = typeof getDBStatus === 'function' ? getDBStatus() : { isConnected: false, readyState: 0 };
+  const isConnected = mongoose.connection.readyState === 1;
+
   res.json({
-    status: 'Healthy',
-    database: dbInfo.isConnected ? 'Connected' : 'Pending Configuration',
+    status: isConnected ? 'Healthy' : 'Degraded',
+    database: isConnected ? 'Connected' : 'Disconnected',
     dbDetails: dbInfo,
     timestamp: new Date().toISOString()
   });
 });
 
 // Mount Routes
-app.use('/api/auth', authRouter); // Auth endpoints: /api/auth/register, /api/auth/login, /api/auth/me
-app.use('/api', apiRoutes);       // Data endpoints: /api/transactions, /api/budgets, etc.
+app.use('/api/auth', authRouter);
+app.use('/api', apiRoutes);       
 
 // Centralized Express Error Handling Middleware
 app.use((err, req, res, next) => {

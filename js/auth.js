@@ -41,23 +41,25 @@ const AuthManager = {
         return false;
       }
 
-      if (health.database === 'Connected' || (health.dbDetails && health.dbDetails.isConnected)) {
-        // Database is fully connected
-        if (!this.isDbConnected) {
-          this.setDbOfflineState(false);
-          this.clearAlert();
-        }
-        this.isDbConnected = true;
+      // Check genuine Mongoose connection state (both backend database and readyState)
+      const isConnected = health.database === 'Connected' || (health.dbDetails && health.dbDetails.isConnected === true && health.dbDetails.readyState === 1);
+
+      if (isConnected) {
+        // Database is fully connected and ready
+        this.setDbOfflineState(false);
+        this.clearAlert();
         if (this.healthPollTimer) {
           clearInterval(this.healthPollTimer);
           this.healthPollTimer = null;
         }
         return true;
       } else {
-        // Database pending configuration or IP whitelist rejection
-        const msg = (health.dbDetails && health.dbDetails.message) 
-          ? health.dbDetails.message 
-          : 'MongoDB Atlas is connecting. Please ensure your current IP is whitelisted in Atlas Network Access.';
+        // Database is disconnected / IP rejected / connecting
+        let msg = (health.dbDetails && health.dbDetails.message) ? health.dbDetails.message : '';
+        // CRITICAL: Filter out any misleading "Connected to cluster" message when database is offline!
+        if (!msg || msg.toLowerCase().includes('connected to cluster')) {
+          msg = 'MongoDB Atlas is disconnected. Please ensure your IP is whitelisted in Atlas Network Access.';
+        }
         this.setDbOfflineState(true, msg);
         this.scheduleHealthPoll();
         return false;
@@ -73,7 +75,7 @@ const AuthManager = {
     if (this.healthPollTimer) return;
     this.healthPollTimer = setInterval(async () => {
       await this.checkDatabaseHealth();
-    }, 6000);
+    }, 5000);
   },
 
   /**
@@ -95,7 +97,10 @@ const AuthManager = {
         textSpan.innerHTML = `<span>Database Offline</span>`;
       }
       if (message) {
-        this.showAlert(message, 'danger');
+        // Filter out misleading cluster message when offline
+        if (!message.toLowerCase().includes('connected to cluster')) {
+          this.showAlert(message, 'danger');
+        }
       }
     } else {
       submitBtn.disabled = false;
@@ -106,6 +111,7 @@ const AuthManager = {
         textSpan.innerHTML = `<span>${actionText}</span> <i data-lucide="arrow-right" style="width: 16px; height: 16px;"></i>`;
         if (window.lucide) lucide.createIcons({ root: textSpan });
       }
+      this.clearAlert();
     }
   },
 
